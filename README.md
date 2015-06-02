@@ -1,4 +1,4 @@
-#Tile Map GenEditor#
+#GenEditor for Tile Maps#
 This is a tool for generating and editing grid/tile-based maps.
 
 
@@ -8,12 +8,12 @@ This is a tool for generating and editing grid/tile-based maps.
 - Generates a tile map from a user-specified width, height, and random number generator seed (Done)
 	- Uses the Perlin noise generator method
 - Display a small preview of the generated map (WIP)
-- Change one or more values like width, height, and seed after generation (WIP)
+- Change one or more values like width, height, and seed after generation then regenerate (Done)
 - Save a map as a text file and image file (WIP)
 - Load a map from a text file (WIP)
 
 ###Planned Features###
-- Post-generation tweaking of a map
+- Post-generation tweaking of a map (manual tile editing, etc.)
 - Custom tile textures
 	- Support for different ways textures can be stored (like large texture map files, etc.)
 - Optional grid lines in image

@@ -1,5 +1,7 @@
 #!/usr/bin/python
-
+"""Credit goes to Ryan (1egoman) for the majority of the gen_map, 
+generate_noise, smooth_noise, and turbulence function code below.
+"""
 import os
 import random
 
@@ -20,21 +22,28 @@ class MapGenerator(object):
     def __init__(self, common_inst, map_data=None):
         # Reference to shared data object
         self.common = common_inst
-        # Change generation values if provided
-        if map_data is not None and isinstance(map_data, dict):
-            self.name = map_data['name']
-            self.width = map_data['width']
-            self.height = map_data['height']
-            self.seed = map_data['seed']
+        # Change generation values
+        self.set_params(map_data)
         # Generation-specific stuff
         self.noise = []
         self.noise_width = 0
         self.noise_height = 0
 
 
+    def set_params(self="not_me", params=None):
+        # Check if params is the correct type
+        if params is not None and isinstance(params, dict):
+            self.name = params['name']
+            self.width = params['width']
+            self.height = params['height']
+            self.seed = params['seed']
 
+
+    # TODO: Test if this will have issues with larger maps (OS thinks program crahsed, etc)
     def gen_map(self):
         """Generates a map and stores it in the common/shared class."""
+        # Clear the list of tiles
+        self.common.tile_map = []
         print "Generating Map..."
         # Water tile upper limit/value for both biome and tile generation
         watertable = 110
