@@ -1,5 +1,5 @@
 #GenEditor for Tile Maps#
-**Note: See [CHANGELOG.md](docs/more_words.md) for detailed version logs.**  
+**Note: See [CHANGELOG.md](CHANGELOG.md) for detailed version logs.**  
 
 ![tile_map_geneditor_sample](https://cloud.githubusercontent.com/assets/7505459/8014902/232b571e-0b9a-11e5-954c-ed1159d38334.png)  
 
