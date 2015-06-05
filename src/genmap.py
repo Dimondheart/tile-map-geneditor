@@ -12,14 +12,13 @@ import common
 
 class MapGenerator(object):
     """Handles generation and regeneration of the maps."""
-    # TODO: Implement random seed selection option.
     name = "Default"
     width = 10
     height = 10
     seed = "12345abc"
 
 
-    def __init__(self, common_inst, map_data=None):
+    def __init__(self, common_inst, map_data):
         # Reference to shared data object
         self.common = common_inst
         # Change generation values
@@ -30,13 +29,14 @@ class MapGenerator(object):
         self.noise_height = 0
 
 
-    def set_params(self="not_me", params=None):
-        # Check if params is the correct type
-        if params is not None and isinstance(params, dict):
-            self.name = params['name']
-            self.width = params['width']
-            self.height = params['height']
-            self.seed = params['seed']
+    def set_params(self, params):
+        # Set values
+        self.width = params['width']
+        self.height = params['height']
+        self.seed = params['seed']
+        # Randomize seed if left blank
+        if self.seed is None:
+            self.seed = random.randint(1000,1000000000)
 
 
     # TODO: Test if this will have issues with larger maps (OS thinks program crahsed, etc)

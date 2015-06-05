@@ -1,4 +1,8 @@
 #GenEditor for Tile Maps#
+**Note: See [CHANGELOG.md](docs/more_words.md) for detailed version logs.**  
+
+![tile_map_geneditor_sample](https://cloud.githubusercontent.com/assets/7505459/8014902/232b571e-0b9a-11e5-954c-ed1159d38334.png)  
+
 This is a tool for generating and editing grid/tile-based maps.
 
 
@@ -7,7 +11,7 @@ This is a tool for generating and editing grid/tile-based maps.
 ###Current Features (Work in Progress)###
 - Generates a tile map from a user-specified width, height, and random number generator seed (Done)
 	- Uses the Perlin noise generator method
-- Display a small preview of the generated map (WIP)
+- Display a small preview of the generated map (Done)
 - Change one or more values like width, height, and seed after generation then regenerate (Done)
 - Save a map as a text file and image file (WIP)
 - Load a map from a text file (WIP)
@@ -22,6 +26,7 @@ This is a tool for generating and editing grid/tile-based maps.
 ###Possible Future Features###
 - Interface for modifying core generation components like water level, occurrence rate of biomes, etc.
 - Display a full-scale, custom textures included, rendering of the map
+- Improved tile map generator (smoother, easier to manipulate, better biome handling, etc)
 - And more
 
 

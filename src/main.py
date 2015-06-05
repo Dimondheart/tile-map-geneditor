@@ -63,7 +63,7 @@ class Main(object):
         """
         while self.common.edit_phase:
             # Update the display window
-            self.EventHandler.disp_update()
+            self.EventHandler.update_display()
             # Do pygame queue events
             self.EventHandler.do_pygame_events()
         # Terminate the program
@@ -71,10 +71,7 @@ class Main(object):
 
 
 
-class Events(object):
-    gen_fields = ["Map Name", "Width", "Height", "Seed"]
-    """Handles some generic actions as well as pygame library events."""
-    # Pygame Event Reference #
+# Pygame Event Reference #
         # QUIT             none
         # ACTIVEEVENT      gain, state
         # KEYDOWN          unicode, key, mod
@@ -90,8 +87,14 @@ class Events(object):
         # VIDEORESIZE      size, w, h
         # VIDEOEXPOSE      none
         # USEREVENT        code
+class Events(object):
+    """Handles some generic actions as well as pygame library events."""
+    # Fields for the input box for the generator
+    gen_fields = ["Width", "Height", "Seed"]
+
+
     def __init__(self, common_inst):
-        # Local reference to instance of shared class
+        # Local reference to shared data object instance
         self.common = common_inst
         # Create graphics handling object
         self.GFX = graphics.Graphics(self.common)
@@ -105,17 +108,16 @@ class Events(object):
         """Steps completed at startup when user wants to make a new map.
         Map generator instance is created after asking the user map width, height, etc.
         """
-        # User input fields
+        # Parts of the prompt window
         info = "These settings can be adjusted later."
         title = "Map Generator Setup"
-        defaults = ["Default", 10, 10, "123abc"]
-        values = easygui.multenterbox(info, title, self.gen_fields, defaults)
-        # Dict of stuff initialized in the map gen object
-        params = self.gen_param_to_dict(values)
+        # Get map generation parameters
+        params = self.gen_param_prompt(info, title, self.gen_fields)
         # Create map generator object
         self.MapGen = genmap.MapGenerator(self.common, params)
         # Generate map
         self.MapGen.gen_map()
+        # Tells main to go into the edit phase
         self.common.edit_phase = True
 
 
@@ -123,14 +125,13 @@ class Events(object):
         """Asks the user for new generation values (eg width) then regenerates
         the map.
         """
+        # Parts of the prompt window
         info = "Change any parameters to desired values."
         title = "Map Regeneration"
         # Set default field values to current map values
-        defaults = [self.MapGen.name, self.MapGen.width, self.MapGen.height, self.MapGen.seed]
-        # Prompt user for new generator parameters
-        values = easygui.multenterbox(info, title, self.gen_fields, defaults)
-        # Change values into dictionary
-        params = self.gen_param_to_dict(values)
+        defaults = [self.MapGen.width, self.MapGen.height, self.MapGen.seed]
+        # Get generation parameters
+        params = self.gen_param_prompt(info, title, self.gen_fields, defaults)
         # Now change the values in the generator object
         # TODO: Compare values to see if map regeneration is needed.
         self.MapGen.set_params(params)
@@ -138,14 +139,17 @@ class Events(object):
         self.MapGen.gen_map()
 
 
-    def gen_param_to_dict(self, values):
-        """Converts values from easygui fields list into a dictionary for the map generator."""
-        # Creat dict and make sure values are the correct type
+    def gen_param_prompt(self, msg="Fill in fields", title="Prompt", fields=[], defaults=[]):
+        """Prompts the user to enter various map generation parameters, and returns
+        them as a dictionary.
+        """
+        # Prompt uer for data
+        values = easygui.multenterbox(msg, title, fields, defaults)
+        # Creat dictionary, make sure types match
         params = {
-        'name' : str(values[0]),
-        'width' : int(values[1]),
-        'height' : int(values[2]),
-        'seed': str(values[3])
+        'width' : int(values[0]),
+        'height' : int(values[1]),
+        'seed': values[2]
         }
         return params
 
@@ -156,29 +160,20 @@ class Events(object):
 
 
     def save_map(self):
-        print "HI"
         """Writes the map data to a text file and image file."""
         # Prompt for the save location
-        save_loc = easygui.diropenbox()
-        # Make the folder to save to if necessary
-        if not os.path.exists(save_loc):
-            try:
-                os.mkdir(save_loc)
-            except Exception:
-                easygui.msgbox("There was an error while trying to save the map to \n" + str(save_loc), "Map Not Saved")
-                return
+        save_path = easygui.filesavebox("Two files will be created, one image and one text file.")
         # Renders the map and returns a surface
         img = self.GFX.render_full_map()
-        # TODO: only allow letters, numbers and certain characters in the file name
-        img_file = os.path.join(save_loc, self.MapGen.name + ".bmp")
         # Check if that is already a file(s) with that name(s), and if it ok to override it
-        msg = "\"" + self.MapGen.name + ".bmp \" already exists.  Override?"
-        options = ("Yes", "No")
-        if os.path.exists(img_file) and not easygui.buttonbox(msg, "Continue?", options) == "Yes":
+        msg = "There is already a file in this location with that name.  Override?"
+        if (os.path.exists(save_path + ".bmp") or os.path.exists(save_path + ".txt")) and easygui.buttonbox(msg, "Continue?", ("Yes", "No")) == "No":
             return
         else:
-            pygame.image.save(img, img_file)
-            easygui.msgbox("\"" + self.MapGen.name + "\" saved successfully", "Save Complete")
+            # Save image to file
+            pygame.image.save(img, save_path + ".bmp")
+            # Indicate saving is complete
+            easygui.msgbox("\"" + str(os.path.basename(save_path)) + "\" saved successfully", "Save Complete")
 
 
     def do_pygame_events(self):
@@ -186,7 +181,6 @@ class Events(object):
         # Get a list of events, the first one allows the program to idle when not in use
         events = [pygame.event.wait()] + pygame.event.get()
         for event in events:
-            print event
             # Quit program event (e.g. close window, etc.)
             if event.type == pygame.QUIT:
                 self.common.edit_phase = False
@@ -201,11 +195,10 @@ class Events(object):
 
     def do_pygame_edit_phase_event(self, event):
         """Processes reactions to pygame events for the edit phase."""
-        print "HIHIHI"
         # Keyboard release
         if event.type == pygame.KEYUP:
             # 'R' key; modify generation settings then regenerate
-            if event.key == pygame.K_r:
+            if event.key == pygame.K_g:
                 self.regen_map()
         # Keyboard press
         elif event.type == pygame.KEYDOWN:
@@ -215,9 +208,9 @@ class Events(object):
                 self.save_map()
 
 
-    def disp_update(self):
+    def update_display(self):
         """Updates the display window."""
-        self.GFX.render_disp()
+        self.GFX.render_display()
 
 
     def unimplemented_feature(self):

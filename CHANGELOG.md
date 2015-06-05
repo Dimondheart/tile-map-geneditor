@@ -1,4 +1,22 @@
-## 0.2 Alpha (Current)
+## 0.3 Alpha (Current)
+
+####New Features
+- Preview of map
+- Rendering and saving the map as an image
+- Random seed option
+	- Leave seed box blank
+
+####Optimization
+- Optimized map generation
+	- For Example name is not a parameter
+- Saving uses the file save interface instead of open directory
+
+####Miscellaneous
+- "README.md" - added sample map image and link to "CHANGELOG.md"
+- Changed regenerate keyboard key from 'r' to 'g'
+
+
+## 0.2 Alpha
 
 ####New Features
 - Changing of basic generator parameters (width, seed, etc.) and map regeneration after initial startup (press 'R' in edit phase)
