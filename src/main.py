@@ -34,28 +34,11 @@ class Main(object):
 
     def start(self):
         """Runs whenever the program is first started/reset."""
-        while True:
-            # Ask if the user wants to load a map or create a new one
-            prompt = "Do you want to create a new map or edit an existing one?"
-            title = "GenEditor Startup"
-            options = ("New Map", "Load Map","Quit")
-            decision = easygui.buttonbox(prompt, title, options)
-            # User wants to make a new map
-            if decision == options[0]:
-                self.EventHandler.new_map()
-            # User wants to load a map
-            elif decision == options[1]:
-                self.EventHandler.load_map()
-            # Quit button
-            elif decision == options[2]:
-                self.EventHandler.quit()
-            # Quit if response is not one of the options (user canceled, etc.)
-            else:
-                self.EventHandler.quit()
-            # Go to the edit phase, or continue to prompt the user
-            if self.common.edit_phase:
-                self.edit()
-                break
+        # Display the main menu until told to go into the edit phase
+        while not self.common.edit_phase:
+            self.EventHandler.main_menu()
+        # Go to the edit phase
+        self.edit()
 
 
     def edit(self):
@@ -90,6 +73,10 @@ class Main(object):
         # USEREVENT        code
 class Events(object):
     """Handles some generic actions as well as pygame library events."""
+    # Instance of the map generator
+    MapGen = None
+
+
     def __init__(self, common_inst):
         # Local reference to shared data object instance
         self.common = common_inst
@@ -106,45 +93,58 @@ class Events(object):
         pygame.event.set_blocked(events_to_block)
 
 
+    def main_menu(self):
+        """The main menu that contains actions like new map and loading."""
+        # Ask if the user wants to load a map or create a new one
+        prompt = "Do you want to create a new map or edit an existing one?"
+        title = "GenEditor Main Menu"
+        options = ("New Map", "Load Map","Quit")
+        decision = easygui.buttonbox(prompt, title, options)
+        # User wants to make a new map
+        if decision == options[0]:
+            self.new_map()
+        # User wants to load a map
+        elif decision == options[1]:
+            self.load_map()
+        # Quit button
+        elif decision == options[2]:
+            self.quit()
+        # Quit if response is not one of the options (user canceled, etc.)
+        else:
+            self.quit()
+
+
     def new_map(self):
-        """Steps completed at startup when user wants to make a new map.
-        Map generator instance is created after asking the user map width, height, etc.
-        """
-        # Parts of the prompt window
-        info = "These settings can be adjusted later."
-        title = "Map Generator Setup"
-        # Get map generation parameters
-        params = self.gen_param_prompt(info, title)
-        # Return to start if user canceled prompt
-        if params is None:
-            return
-        # Create map generator object
-        self.MapGen = genmap.MapGenerator(self.common, params)
+        """Sets up the map generator if needed and generates a new map."""
+        # First time a map is generated
+        if self.MapGen is None:
+            # Parts of the prompt window
+            info = "These settings can be adjusted later."
+            title = "New Map"
+            # Get generator parameters
+            params = self.gen_param_prompt(info, title)
+            # Return to start if user canceled prompt
+            if params is None:
+                return
+            # Create map generator object
+            self.MapGen = genmap.MapGenerator(self.common, params)
+        else:
+            # Parts of the prompt window
+            info = "Change any parameters to desired values."
+            title = "New Map"
+            # Set default field values to current map values
+            defaults = [self.MapGen.params['width'], self.MapGen.params['height'], self.MapGen.params['seed']]
+            # Get generation parameters
+            params = self.gen_param_prompt(info, title, defaults)
+            # Change parameters
+            self.MapGen.set_params(params)
+            # Return to start if user canceled prompt
+            if params is None:
+                return
         # Generate map
         self.MapGen.gen_map()
         # Tells main to go into the edit phase
         self.common.edit_phase = True
-
-
-    def regen_map(self):
-        """Asks the user for new generation values (eg width) then regenerates
-        the map.
-        """
-        # Parts of the prompt window
-        info = "Change any parameters to desired values."
-        title = "Regenerate Map"
-        # Set default field values to current map values
-        defaults = [self.MapGen.params['width'], self.MapGen.params['height'], self.MapGen.params['seed']]
-        # Get generation parameters
-        params = self.gen_param_prompt(info, title, defaults)
-        # Cancel regeneration if None is returned
-        if params is None:
-            return
-        # Now change the values in the generator object
-        # TODO: Compare values to see if map regeneration is needed.
-        self.MapGen.set_params(params)
-        # Regenerate the map with new values
-        self.MapGen.gen_map()
 
 
     def gen_param_prompt(self, msg="Fill in fields", title="Prompt", defaults=[]):
@@ -247,14 +247,15 @@ class Events(object):
         """Processes reactions to pygame events for the edit phase."""
         # Keyboard release
         if event.type == pygame.KEYUP:
-            # 'R' key; modify generation settings then regenerate
-            if event.key == pygame.K_g:
-                self.regen_map()
+            # Opens the main menu
+            if event.key == pygame.K_ESCAPE:
+                self.main_menu()
         # Keyboard press
         elif event.type == pygame.KEYDOWN:
+            # Get the current keyboard key states
+            key_states = pygame.key.get_pressed()
             # Save the current map (CTRL+S)
-            if event.key == pygame.K_s and (
-            pygame.key.get_pressed()[pygame.K_LCTRL] or pygame.key.get_pressed()[pygame.K_RCTRL]):
+            if event.key == pygame.K_s and (key_states[pygame.K_LCTRL] or key_states[pygame.K_RCTRL]):
                 self.save_map()
 
 

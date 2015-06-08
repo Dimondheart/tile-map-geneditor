@@ -1,4 +1,13 @@
-## 0.4 Alpha (Current)
+## 0.5 Alpha (Current)
+
+####New Features
+- Menu displayed on start up is now the main menu (access by pressing 'Escape' key)
+
+####Optimizations
+- Integrated map regeneration into the main menu (just use the 'new map' button)
+
+
+## 0.4 Alpha
 
 ####New Features
 - Maps are now saved as both an image (bitmap) and text file (JSON data)
