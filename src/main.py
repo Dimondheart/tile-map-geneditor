@@ -265,7 +265,7 @@ class Events(object):
             # Get the current keyboard key states
             key_states = pygame.key.get_pressed()
             # Save the current map (CTRL+S)
-            if event.key == pygame.K_s and (key_states[pygame.K_LCTRL] or key_states[pygame.K_RCTRL]):
+            if key_states[pygame.K_s] and (key_states[pygame.K_LCTRL] or key_states[pygame.K_RCTRL]):
                 self.save_map()
 
 
