@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import time
 
 import pygame
 
@@ -91,6 +92,8 @@ class Events(object):
         pygame.JOYBUTTONDOWN
         ]
         pygame.event.set_blocked(events_to_block)
+        # flag to be sure we debounce save handler
+        self.currently_saving = False
 
 
     def main_menu(self):
@@ -245,28 +248,36 @@ class Events(object):
             if event.type == pygame.QUIT:
                 self.common.edit_phase = False
                 break
-            # Event processing for during the edit phase
-            elif self.common.edit_phase:
-                self.do_pygame_edit_phase_event(event)
+
             # Other situations
-            else:
-                pass
+            else: pass
+
+            # Event processing for during the edit phase
+            self.do_pygame_edit_phase_event(event)
 
 
     def do_pygame_edit_phase_event(self, event):
         """Processes reactions to pygame events for the edit phase."""
+
+        # be sure we are in edit phase
+        if not self.common.edit_phase: return
+
         # Keyboard release
         if event.type == pygame.KEYUP:
             # Opens the main menu
             if event.key == pygame.K_ESCAPE:
                 self.main_menu()
-        # Keyboard press
-        elif event.type == pygame.KEYDOWN:
-            # Get the current keyboard key states
-            key_states = pygame.key.get_pressed()
-            # Save the current map (CTRL+S)
-            if key_states[pygame.K_s] and (key_states[pygame.K_LCTRL] or key_states[pygame.K_RCTRL]):
+
+        # Get the current keyboard key states
+        key_states = pygame.key.get_pressed()
+
+        # Save the current map (CTRL+S)
+        # self.currently_saving is used to debounce the save handler.
+        if key_states[pygame.K_s] and (key_states[pygame.K_LCTRL] or key_states[pygame.K_RCTRL]):
+            if not self.currently_saving:
+                self.currently_saving = True
                 self.save_map()
+                self.currently_saving = False
 
 
     def update_display(self):
