@@ -12,10 +12,8 @@ import common
 
 class MapGenerator(object):
     """Handles generation and regeneration of the maps."""
-    name = "Default"
-    width = 10
-    height = 10
-    seed = "12345abc"
+    # Dictionary of generator parameters
+    params = {}
 
 
     def __init__(self, common_inst, map_data):
@@ -31,12 +29,12 @@ class MapGenerator(object):
 
     def set_params(self, params):
         # Set values
-        self.width = params['width']
-        self.height = params['height']
-        self.seed = params['seed']
+        self.params = params
         # Randomize seed if left blank
-        if self.seed is None:
-            self.seed = random.randint(1000,1000000000)
+        if self.params['seed'] is None:
+            self.params['seed'] = str(random.randint(1000,1000000000))
+        # Set the seed for the random number generator
+        random.seed(self.params['seed'])
 
 
     # TODO: Test if this will have issues with larger maps (OS thinks program crahsed, etc)
@@ -60,12 +58,9 @@ class MapGenerator(object):
         mtnlevel = 180
         # Used by noise generator
         octaves = 200
-        # tilewidth = 64
-        # nameone = ["Lema", "Mist", "North", "East", "South", "West", "Mil", "Barrow", "Iron", "Rock", "Harmon", "Center", "Cata", "Wilde", "Fox", "Way", "Dell", "Green", "Blue", "Land", "Merr", "Medow", "Gold", "By", "Winter", "Summer", "Spring", "Fall", "Mage", "Fun", "Lock", "Eri", "Clear", "Old", "Frey", "Sea", "Shell", "Haven", "Red", "Spen", "Syra", "Ron", "Stum", "Qwe", "Flat", "Tild"]
-        # nametwo = ["ville", "opilis", "town", "sis", "castle", "ilita", "ton", "port", "o", "uk", "burg", "borough"]
-
-        noise = self.generate_noise(self.width, self.height, 10, octaves)
-        biomenoise = self.generate_noise(self.width, self.height, 5, octaves/3)
+        # Generate tile noise and biome noise
+        noise = self.generate_noise(self.params['width'], self.params['height'], 10, octaves)
+        biomenoise = self.generate_noise(self.params['width'], self.params['height'], 5, octaves/3)
         allowaquatic = True
         nbiome = None
 
@@ -143,13 +138,10 @@ class MapGenerator(object):
             # Add column/row to tile map
             self.common.tile_map.append(column)
         print "Map Generated"
-        for row in self.common.tile_map:
-            print row
 
 
     def generate_noise(self, width, height, frequency, octaves):
         """Generates a 2d array of random noise."""
-
         del self.noise[:]
         self.noise_width = width
         self.noise_height = height

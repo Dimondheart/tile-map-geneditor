@@ -8,25 +8,26 @@ This is a tool for generating and editing grid/tile-based maps.
 
 ##Features##
 
-###Current Features (Work in Progress)###
-- Generates a tile map from a user-specified width, height, and random number generator seed (Done)
+###Current Features###
+- Generates a tile map from a user-specified width, height, and random number generator seed
 	- Uses the Perlin noise generator method
-- Display a small preview of the generated map (Done)
-- Change one or more values like width, height, and seed after generation then regenerate (Done)
-- Save a map as a text file and image file (WIP)
-- Load a map from a text file (WIP)
+- Display a small preview of the generated map
+- Change one or more values like width, height, and seed after generation then regenerate
+- Save a map as a text file and image file
+- Load a map from a text file
 
 ###Planned Features###
 - Post-generation tweaking of a map (manual tile editing, etc.)
 - Custom tile textures
 	- Support for different ways textures can be stored (like large texture map files, etc.)
-- Optional grid lines in image
 - And more
 
 ###Possible Future Features###
 - Interface for modifying core generation components like water level, occurrence rate of biomes, etc.
 - Display a full-scale, custom textures included, rendering of the map
 - Improved tile map generator (smoother, easier to manipulate, better biome handling, etc)
+- Customizing how the map data is saved and what data is included (like tile type and biome)
+- Optional grid lines in image
 - And more
 
 

@@ -1,4 +1,22 @@
-## 0.3 Alpha (Current)
+## 0.4 Alpha (Current)
+
+####New Features
+- Maps are now saved as both an image (bitmap) and text file (JSON data)
+- Maps can now be loaded from a text file
+
+####Optimizations
+- Greatly sped up map generation time
+
+####Bug Fixes
+- The same seed and map dimensions will always generate the same map
+- Random seed selection fixed
+- Fixed crashes that occurred when the user canceled a file open/close window or text prompt window
+
+####Miscellaneous
+- Minor improvements to indicator/prompt windows
+
+
+## 0.3 Alpha
 
 ####New Features
 - Preview of map
@@ -6,7 +24,7 @@
 - Random seed option
 	- Leave seed box blank
 
-####Optimization
+####Optimizations
 - Optimized map generation
 	- For Example name is not a parameter
 - Saving uses the file save interface instead of open directory
@@ -23,10 +41,10 @@
 - Saving of map images (only creates a test image until graphics are implemented)
 - Started implementing graphics and rendering of the map
 
-####Optimization
+####Optimizations
 - Optimized Pygame event handling
 
-####Bugfixes
+####Bug Fixes
 - Minor bugfixes
 - Note: There is a weird bug right now that causes keys to act strange for me, you may have to press CTRL+S a couple times at the same time to get the save window to pop up
 
