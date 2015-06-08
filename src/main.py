@@ -96,20 +96,29 @@ class Events(object):
     def main_menu(self):
         """The main menu that contains actions like new map and loading."""
         # Ask if the user wants to load a map or create a new one
-        prompt = "Do you want to create a new map or edit an existing one?"
-        title = "GenEditor Main Menu"
-        options = ("New Map", "Load Map","Quit")
+        prompt = "Welcome to GenEditor for Tile Maps!"
+        title = "Main Menu"
+        options = ["New Map", "Load Map"]
+        # Separate options for start up and other phases
+        if self.common.edit_phase:
+            options.append("Close Menu")
+        else:
+            options.append("Quit")
+        # Display the window/prompt and get the user decision
         decision = easygui.buttonbox(prompt, title, options)
         # User wants to make a new map
-        if decision == options[0]:
+        if decision == "New Map":
             self.new_map()
         # User wants to load a map
-        elif decision == options[1]:
+        elif decision == "Load Map":
             self.load_map()
-        # Quit button
-        elif decision == options[2]:
+        # Close the menu
+        elif decision == "Close Menu":
+            return
+        # Quit the program
+        elif decision == "Quit":
             self.quit()
-        # Quit if response is not one of the options (user canceled, etc.)
+        # Quit if response is not one of the known options
         else:
             self.quit()
 
@@ -136,11 +145,11 @@ class Events(object):
             defaults = [self.MapGen.params['width'], self.MapGen.params['height'], self.MapGen.params['seed']]
             # Get generation parameters
             params = self.gen_param_prompt(info, title, defaults)
-            # Change parameters
-            self.MapGen.set_params(params)
             # Return to start if user canceled prompt
             if params is None:
                 return
+            # Change parameters
+            self.MapGen.set_params(params)
         # Generate map
         self.MapGen.gen_map()
         # Tells main to go into the edit phase
@@ -181,6 +190,7 @@ class Events(object):
             return
         # Open the file and process the JSON data
         with open(map_file, 'r') as f:
+            json_data = None
             try:
                 # Load file's JSON data into python objects
                 json_data = json.loads(f.read())
@@ -188,8 +198,8 @@ class Events(object):
                 self.common.tile_map = json_data['tile_map']
                 # Create generator with the loaded map's parameters
                 self.MapGen = genmap.MapGenerator(self.common, json_data['generator_data'])
-                # Clear JSON data to save memory
-                del json_data
+                # Switch to map edit phase
+                self.common.edit_phase = True
             # JSON could not load data from the file or it is not correctly formatted
             except (ValueError, KeyError):
                 # Display info to user
@@ -197,9 +207,9 @@ class Events(object):
                     name=os.path.basename(map_file)
                     )
                 easygui.msgbox(msg, "Invalid Map")
-                return
-        # Switch to map edit phase
-        self.common.edit_phase = True
+            finally:
+                # Clear JSON data to save memory
+                del json_data
 
 
     def save_map(self):

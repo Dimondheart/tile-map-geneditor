@@ -24,10 +24,11 @@ This is a tool for generating and editing grid/tile-based maps.
 
 ###Possible Future Features###
 - Interface for modifying core generation components like water level, occurrence rate of biomes, etc.
-- Display a full-scale, custom textures included, rendering of the map
+- Display a full-scale, custom textures included, rendering of the map before saving
 - Improved tile map generator (smoother, easier to manipulate, better biome handling, etc)
 - Customizing how the map data is saved and what data is included (like tile type and biome)
 - Optional grid lines in image
+- Isomeric map rendering
 - And more
 
 

@@ -1,4 +1,14 @@
-## 0.5 Alpha (Current)
+## 0.5.1 Alpha (Current)
+
+####Bug Fixes
+- Fixed crash due to canceling the new map window when in edit/preview mode
+
+####Miscellaneous
+- Main menu displays a 'Close Menu' button instead of 'Quit' when there is an open map
+- Made a simple shell script for Linux (you will have to manually mark it as executable for now)
+
+
+## 0.5 Alpha
 
 ####New Features
 - Menu displayed on start up is now the main menu (access by pressing 'Escape' key)
