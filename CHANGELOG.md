@@ -1,4 +1,14 @@
-## 0.5.1 Alpha (Current)
+## 0.5.2 Alpha (Current)
+
+####Bug Fixes
+- Cross-platform fixes
+- Saving process improvements
+
+####Miscellaneous
+- Marked run(linux).sh as executable
+
+
+## 0.5.1 Alpha
 
 ####Bug Fixes
 - Fixed crash due to canceling the new map window when in edit/preview mode
